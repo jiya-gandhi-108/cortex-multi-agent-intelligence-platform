@@ -1,0 +1,48 @@
+[project]
+name = "cortex-backend"
+version = "0.1.0"
+requires-python = ">=3.12"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = ["migrations/versions"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "S", "ASYNC", "RUF"]
+ignore = ["S101"]  # asserts are fine in tests and internal invariants
+
+[tool.ruff.lint.per-file-ignores]
+"app/evaluation/benchmarks.py" = ["E501"]  # benchmark data table
+"app/evaluation/{metrics,report}.py" = ["E501"]  # prose definitions and Markdown table templates
+"tests/**" = ["S104", "S105", "S106", "S107", "S603", "E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "session"
+asyncio_default_test_loop_scope = "session"
+markers = [
+    "integration: needs live Postgres/Redis (run with -m integration)",
+    "live: calls paid external APIs; never run in CI",
+]
+addopts = "-m 'not integration and not live' --strict-markers"
+filterwarnings = ["ignore::urllib3.exceptions.DependencyWarning"]
+
+[tool.mypy]
+python_version = "3.12"
+plugins = ["pydantic.mypy"]
+strict = true
+ignore_missing_imports = true
+exclude = ["migrations/"]
+
+[tool.coverage.run]
+source = ["app"]
+# SQLAlchemy's async engine runs ORM code inside greenlets; without this, coverage
+# silently under-reports every repository/service line executed there.
+concurrency = ["greenlet", "thread"]
+omit = ["app/evaluation/__main__.py"]
+
+[tool.coverage.report]
+skip_covered = true
+show_missing = false

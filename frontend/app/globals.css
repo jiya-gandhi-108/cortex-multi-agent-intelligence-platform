@@ -1,0 +1,147 @@
+@import "tailwindcss";
+@import "@fontsource-variable/source-serif-4/index.css";
+@import "@fontsource/ibm-plex-sans/400.css";
+@import "@fontsource/ibm-plex-sans/500.css";
+@import "@fontsource/ibm-plex-sans/600.css";
+@import "@fontsource/ibm-plex-mono/400.css";
+@import "@fontsource/ibm-plex-mono/500.css";
+
+/*
+  Cortex tokens.
+  Graphite base, one muted iris accent for interaction, and three verdict colours
+  that only ever mean evidence status (supported / partial / unsupported).
+*/
+@theme {
+  --color-canvas: #16171b;
+  --color-surface: #1e2026;
+  --color-raised: #262932;
+  --color-line: #33363f;
+  --color-line-strong: #454955;
+
+  --color-ink: #e8e6e3;
+  --color-ink-muted: #a3a5ad;
+  --color-ink-faint: #74777f;
+
+  --color-iris: #a594f9;
+  --color-iris-strong: #bcb0ff;
+  --color-iris-soft: #a594f91f;
+
+  --color-supported: #84bc9c;
+  --color-partial: #d6ad62;
+  --color-unsupported: #d98282;
+  --color-supported-soft: #84bc9c1f;
+  --color-partial-soft: #d6ad621f;
+  --color-unsupported-soft: #d982821f;
+
+  --font-serif: "Source Serif 4 Variable", Georgia, serif;
+  --font-sans: "IBM Plex Sans", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  --radius-control: 6px;
+  --radius-panel: 10px;
+
+  /* Type scale: 1.2 minor-third steps around a 15px body */
+  --text-xs: 0.75rem;
+  --text-sm: 0.8125rem;
+  --text-base: 0.9375rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.35rem;
+  --text-2xl: 1.62rem;
+  --text-3xl: 2.33rem;
+  --text-4xl: 3.2rem;
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+    background: var(--color-canvas);
+  }
+  body {
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: 1.55;
+    font-feature-settings: "tnum" 1, "lnum" 1;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection {
+    background: var(--color-iris-soft);
+    color: var(--color-ink);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-iris);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  h1, h2, h3 {
+    font-family: var(--font-serif);
+    font-weight: 560;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+}
+
+/* Long-form report typography (Markdown output). */
+.report-prose {
+  font-family: var(--font-serif);
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  color: var(--color-ink);
+  max-width: 72ch;
+}
+.report-prose h1 { font-size: var(--text-3xl); margin: 0 0 0.5rem; }
+.report-prose h2 {
+  font-size: var(--text-xl);
+  margin: 2.5rem 0 0.75rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--color-line);
+  scroll-margin-top: 5rem;
+}
+.report-prose p, .report-prose ul, .report-prose ol { margin: 0 0 1rem; }
+.report-prose ul { list-style: disc; padding-left: 1.25rem; }
+.report-prose ol { list-style: decimal; padding-left: 1.4rem; }
+.report-prose li { margin: 0.35rem 0; }
+.report-prose li::marker { color: var(--color-ink-faint); }
+.report-prose strong { font-weight: 640; }
+.report-prose em { color: var(--color-ink-muted); }
+.report-prose blockquote {
+  margin: 1rem 0 1.5rem;
+  padding: 0.75rem 1rem;
+  border-left: 3px solid var(--color-partial);
+  background: var(--color-partial-soft);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  border-radius: 0 var(--radius-control) var(--radius-control) 0;
+}
+.report-prose a { color: var(--color-iris-strong); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: #a594f966; }
+.report-prose table {
+  width: 100%;
+  margin: 1rem 0 1.5rem;
+  border-collapse: collapse;
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  display: block;
+  overflow-x: auto;
+}
+.report-prose th, .report-prose td {
+  border-bottom: 1px solid var(--color-line);
+  padding: 0.5rem 0.75rem 0.5rem 0;
+  text-align: left;
+  vertical-align: top;
+}
+.report-prose th { color: var(--color-ink-muted); font-weight: 500; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@keyframes live-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+.live-dot { animation: live-pulse 1.6s ease-in-out infinite; }

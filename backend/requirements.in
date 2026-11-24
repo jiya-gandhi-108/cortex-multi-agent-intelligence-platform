@@ -1,0 +1,38 @@
+# Top-level runtime dependencies. Compile with:
+#   uv pip compile requirements.in -o requirements.txt --python-version 3.12
+# Every transitive dependency is then pinned in requirements.txt.
+
+# --- API
+fastapi==0.165.0
+uvicorn[standard]==0.54.0
+sse-starlette==3.7.0
+pydantic[email]==2.14.4
+pydantic-settings==2.16.3
+
+# --- Persistence (psycopg3 serves both SQLAlchemy async and the LangGraph checkpointer)
+sqlalchemy[asyncio]==2.1.9
+alembic==1.20.1
+psycopg[binary,pool]==3.3.9
+redis==8.1.0
+
+# --- Auth
+pwdlib[argon2]==0.4.2
+pyjwt==2.15.1
+
+# --- AI / orchestration
+langgraph==1.2.24
+langgraph-checkpoint-postgres==3.2.1
+groq==1.7.0
+google-genai==3.6.1
+langsmith==0.16.0
+
+# --- Research tools (Tavily/Exa are called over REST with httpx; no SDKs needed)
+httpx==0.28.1
+trafilatura==2.3.1
+
+# --- Reports
+markdown-it-py==4.3.0
+weasyprint==70.0
+
+# --- Observability
+structlog==26.1.0

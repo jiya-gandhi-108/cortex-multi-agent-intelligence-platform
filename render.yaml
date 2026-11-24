@@ -1,0 +1,63 @@
+# Render Blueprint for the Cortex API and its Redis-compatible store.
+# New > Blueprint in the Render dashboard, point it at this repo. Values marked
+# `sync: false` are prompted for once, at creation; see docs/deployment.md.
+services:
+  - type: web
+    name: cortex-api
+    runtime: docker
+    rootDir: backend
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free
+    region: oregon
+    healthCheckPath: /health/ready
+    autoDeployTrigger: commit
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: LOG_JSON
+        value: "true"
+      - key: DATABASE_URL
+        sync: false
+      - key: REDIS_URL
+        fromService:
+          type: keyvalue
+          name: cortex-redis
+          property: connectionString
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: PROXY_SHARED_SECRET
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: TAVILY_API_KEY
+        sync: false
+      - key: LANGSMITH_API_KEY
+        sync: false
+      - key: LANGSMITH_TRACING
+        value: "true"
+      - key: LANGSMITH_PROJECT
+        value: cortex
+      - key: LLM_PRICING_JSON
+        sync: false
+      # Free Postgres poolers allow few connections; keep the app's pools small.
+      - key: DB_POOL_SIZE
+        value: "3"
+      - key: DB_MAX_OVERFLOW
+        value: "2"
+      - key: CHECKPOINT_POOL_SIZE
+        value: "3"
+      # Render's free Key Value has 25 MB and no persistence; expire run event logs sooner.
+      - key: EVENT_STREAM_TTL_HOURS
+        value: "24"
+      - key: MAX_ACTIVE_RUNS_PER_USER
+        value: "1"
+
+  - type: keyvalue
+    name: cortex-redis
+    plan: free
+    region: oregon
+    maxmemoryPolicy: noeviction
+    ipAllowList: []  # reachable only from services in this Render account

@@ -1,0 +1,24 @@
+# Optional: keeps a Render free-tier backend awake so a research run is not cut short
+# by the 15-minute idle spin-down (runs can be resumed, but staying warm is smoother).
+# Does nothing until you set the repository variable KEEPALIVE_URL, e.g.
+# https://cortex-api.onrender.com/health  (Settings > Secrets and variables > Actions > Variables).
+# One always-on free service fits inside Render's 750 free instance hours per month.
+name: keepalive
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  ping:
+    if: ${{ vars.KEEPALIVE_URL != '' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Ping backend health
+        run: curl --fail --silent --show-error --max-time 120 --retry 2 "$KEEPALIVE_URL"
+        env:
+          KEEPALIVE_URL: ${{ vars.KEEPALIVE_URL }}
